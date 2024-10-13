@@ -6,6 +6,9 @@ excel_file = 'rsvp_list.xlsx'
 # Read the Excel file
 df = pd.read_excel(excel_file)
 
+# Replace empty RSVP cells with "None"
+df['RSVP'].fillna('None', inplace=True)
+
 # Create an HTML file to display the RSVP data
 with open('rsvp_widget.html', 'w') as file:
     file.write('''
@@ -48,7 +51,7 @@ with open('rsvp_widget.html', 'w') as file:
         .status-no {
             background-color: #f8d7da;
         }
-        .status-pending {
+        .status-none {
             background-color: #fff3cd;
         }
     </style>
@@ -61,7 +64,7 @@ with open('rsvp_widget.html', 'w') as file:
             <th>Last Name</th>
             <th>First Name</th>
             <th>Address</th>
-            <th>RSVP Status</th>
+            <th>RSVP</th>
         </tr>
     </thead>
     <tbody>
@@ -70,19 +73,19 @@ with open('rsvp_widget.html', 'w') as file:
     # Loop through the dataframe and create table rows
     for index, row in df.iterrows():
         rsvp_class = ''
-        if row['RSVP Status'] == 'Yes':
+        if row['RSVP'] == 'Yes':
             rsvp_class = 'status-yes'
-        elif row['RSVP Status'] == 'No':
+        elif row['RSVP'] == 'No':
             rsvp_class = 'status-no'
-        elif row['RSVP Status'] == 'Pending':
-            rsvp_class = 'status-pending'
+        elif row['RSVP'] == 'None':
+            rsvp_class = 'status-none'
 
         file.write(f'''
         <tr class="{rsvp_class}">
             <td>{row['Last Name']}</td>
             <td>{row['First Name']}</td>
             <td>{row['Address']}</td>
-            <td>{row['RSVP Status']}</td>
+            <td>{row['RSVP']}</td>
         </tr>
         ''')
 
