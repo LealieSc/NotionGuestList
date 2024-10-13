@@ -1,0 +1,97 @@
+import pandas as pd
+
+# Specify the Excel file path (must be in the same directory or provide full path)
+excel_file = 'rsvp_list.xlsx'
+
+# Read the Excel file
+df = pd.read_excel(excel_file)
+
+# Create an HTML file to display the RSVP data
+with open('rsvp_widget.html', 'w') as file:
+    file.write('''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSVP Overview</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #EEF3ED;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .status-yes {
+            background-color: #d4edda;
+        }
+        .status-no {
+            background-color: #f8d7da;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+        }
+    </style>
+</head>
+<body>
+
+<table>
+    <thead>
+        <tr>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Address</th>
+            <th>RSVP Status</th>
+        </tr>
+    </thead>
+    <tbody>
+''')
+
+    # Loop through the dataframe and create table rows
+    for index, row in df.iterrows():
+        rsvp_class = ''
+        if row['RSVP Status'] == 'Yes':
+            rsvp_class = 'status-yes'
+        elif row['RSVP Status'] == 'No':
+            rsvp_class = 'status-no'
+        elif row['RSVP Status'] == 'Pending':
+            rsvp_class = 'status-pending'
+
+        file.write(f'''
+        <tr class="{rsvp_class}">
+            <td>{row['Last Name']}</td>
+            <td>{row['First Name']}</td>
+            <td>{row['Address']}</td>
+            <td>{row['RSVP Status']}</td>
+        </tr>
+        ''')
+
+    file.write('''
+    </tbody>
+</table>
+
+</body>
+</html>
+''')
+
+print("RSVP widget created as 'rsvp_widget.html'")
